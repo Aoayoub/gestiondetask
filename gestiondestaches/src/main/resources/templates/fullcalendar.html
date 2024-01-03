@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+  <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          events: function (fetchInfo, successCallback, failureCallback) {
+            // Fetch tasks from your API
+            fetch('/api/task/all')
+              .then(response => response.json())
+              .then(data => {
+                // Transform your task data into FullCalendar events
+                var events = data.map(task => ({
+                  title: task.title,
+                  start: task.dueDate,
+                  end: task.dueDate,  // You can adjust the end date if needed
+                }));
+
+                // Call the successCallback with the events
+                successCallback(events);
+              })
+              .catch(error => {
+                console.error('Error fetching tasks:', error);
+                // Call the failureCallback in case of an error
+                failureCallback(error);
+              });
+          }
+        });
+        calendar.render();
+      });
+
+    </script>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>
